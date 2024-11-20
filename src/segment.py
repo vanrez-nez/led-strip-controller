@@ -8,8 +8,28 @@ class Segment:
         self.strip = strip
         self.start = start
         self.end = end
-        self.data = strip.data[start:end]
         self.direction = direction
 
+    def clear(self):
+        """Clear the segment data."""
+        self.strip.data[self.start:self.end] = 0
+
     def __len__(self):
-        return len(self.data)
+        return abs(self.end - self.start)
+
+    def __iter__(self):
+        if self.direction >= 0:
+            indices = range(self.start, self.end)
+        else:
+            indices = range(self.end - 1, self.start - 1, -1)
+        for i in indices:
+            yield Pixel(self.strip, i)
+
+    def __getitem__(self, index):
+        if not 0 <= index < len(self):
+            raise IndexError("Segment index out of range.")
+        if self.direction >= 0:
+            actual_index = self.start + index
+        else:
+            actual_index = self.end - 1 - index
+        return Pixel(self.strip, actual_index)

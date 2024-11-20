@@ -4,6 +4,14 @@ class Pixel:
         self.index = index  # Index in the strip data
 
     @property
+    def rgb(self):
+        return self.strip.data[self.index, :3]
+
+    @rgb.setter
+    def rgb(self, value):
+        self.strip.data[self.index, :3] = value
+
+    @property
     def r(self):
         return self.strip.data[self.index, 0]
 

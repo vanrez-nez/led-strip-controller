@@ -6,6 +6,8 @@ import numpy as np
 import tkinter as tk
 import numpy as np
 import time
+from effects.blink_fx import BlinkFx
+from loop import Loop
 
 class StripVisualizer:
     def __init__(self, strip):
@@ -35,6 +37,11 @@ class StripVisualizer:
             rect = self.canvas.create_rectangle(x0, y0, x1, y1, fill='black')
             self.led_rects.append(rect)
 
+    def close(self):
+        """Cleanly close the Tkinter window."""
+        self.root.quit()
+        self.root.destroy()
+
     def update(self):
         for i in range(len(self.strip)):
             r, g, b, brightness = self.strip.data[i]
@@ -54,24 +61,30 @@ class StripVisualizer:
         self.canvas.update_idletasks()
         self.canvas.update()
 
-if __name__ == "__main__":
+def main():
     strip = Strip(50)
-    # Initialize the visualizer with the strip
     visualizer = StripVisualizer(strip)
+    segment1 = Segment(strip, 10, 20)
+    segment2 = Segment(strip, 40, 50, direction=-1)
+    blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500)  # Red blink every 500 ms
+
+    def on_frame(delta_ms, elapsed_ms):
+        blink_fx.update(delta_ms)
+        visualizer.update()
+        print(f"Elapsed time: {elapsed_ms:.2f} ms")
+        visualizer.root.after(1, loop.update)
+
+    loop = Loop(callback=on_frame, fps=60)
+    visualizer.root.after(1, loop.update)
     try:
-        while True:
-            # Modify the strip data as needed
-            # Example: Cycle colors across the strip
-            strip.data[:, 0] = (strip.data[:, 0] + 5) % 255   # Adjust red component
-            strip.data[:, 1] = (strip.data[:, 1] + 3) % 255   # Adjust green component
-            strip.data[:, 2] = (strip.data[:, 2] + 1) % 255   # Adjust blue component
-            strip.data[:, 3] = 255                            # Set brightness to maximum
-            # Update the visualization
-            visualizer.update()
-            # Sleep or perform other tasks
-            time.sleep(30/1000)
+        loop.start()
+        visualizer.root.mainloop()
+
     except KeyboardInterrupt:
         pass
     finally:
-        # Cleanly close the Tkinter window
-        visualizer.root.destroy()
+        loop.stop()
+        visualizer.close()
+
+if __name__ == "__main__":
+    main()
