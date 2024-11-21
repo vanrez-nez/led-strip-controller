@@ -62,10 +62,10 @@ class StripVisualizer:
 def main():
     strip = Strip(50)
     visualizer = StripVisualizer(strip)
-    segment1 = Segment(strip, 10, 20)
-    segment2 = Segment(strip, 40, 50, direction=-1)
+    segment1 = Segment(strip, 0, 50)
+    # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
-    g = Gradient(colors=gPreset)
+    g = Gradient(colors=gPreset, resolution=25)
     blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
     loop = Loop()
     def on_frame():
