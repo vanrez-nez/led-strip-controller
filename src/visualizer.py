@@ -4,6 +4,8 @@ from segment import Segment
 import tkinter as tk
 from effects.blink_fx import BlinkFx
 from loop import Loop
+from gradient import Gradient
+from palette import GRADIENT_PRESETS
 
 class StripVisualizer:
     def __init__(self, strip):
@@ -30,7 +32,7 @@ class StripVisualizer:
             y0 = self.spacing
             x1 = x0 + self.led_size
             y1 = y0 + self.led_size
-            rect = self.canvas.create_rectangle(x0, y0, x1, y1, fill='black')
+            rect = self.canvas.create_rectangle(x0, y0, x1, y1, fill='black', outline='black')
             self.led_rects.append(rect)
 
     def close(self):
@@ -62,7 +64,9 @@ def main():
     visualizer = StripVisualizer(strip)
     segment1 = Segment(strip, 10, 20)
     segment2 = Segment(strip, 40, 50, direction=-1)
-    blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500)  # Red blink every 500 ms
+    gPreset = GRADIENT_PRESETS["red_flash"]
+    g = Gradient(colors=gPreset)
+    blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
     loop = Loop()
     def on_frame():
         loop.update()
