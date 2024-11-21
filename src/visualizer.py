@@ -1,11 +1,7 @@
 import tkinter as tk
 from strip import Strip
 from segment import Segment
-from pixel import Pixel
-import numpy as np
 import tkinter as tk
-import numpy as np
-import time
 from effects.blink_fx import BlinkFx
 from loop import Loop
 
@@ -67,23 +63,20 @@ def main():
     segment1 = Segment(strip, 10, 20)
     segment2 = Segment(strip, 40, 50, direction=-1)
     blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500)  # Red blink every 500 ms
-
-    def on_frame(delta_ms, elapsed_ms):
-        blink_fx.update(delta_ms)
+    loop = Loop()
+    def on_frame():
+        loop.update()
+        blink_fx.update(loop.delta)
         visualizer.update()
-        print(f"Elapsed time: {elapsed_ms:.2f} ms")
-        visualizer.root.after(1, loop.update)
-
-    loop = Loop(callback=on_frame, fps=60)
-    visualizer.root.after(1, loop.update)
+        # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
+        visualizer.root.after(1, on_frame)
+    visualizer.root.after(1, on_frame)
     try:
-        loop.start()
         visualizer.root.mainloop()
 
     except KeyboardInterrupt:
         pass
     finally:
-        loop.stop()
         visualizer.close()
 
 if __name__ == "__main__":
