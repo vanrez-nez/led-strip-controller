@@ -6,6 +6,7 @@ from effects.blink_fx import BlinkFx
 from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
+from signal_generator import SignalGenerator
 
 class StripVisualizer:
     def __init__(self, strip):
@@ -62,15 +63,20 @@ class StripVisualizer:
 def main():
     strip = Strip(50)
     visualizer = StripVisualizer(strip)
+    signal = SignalGenerator(peak_time=1, duration=0.25, amplitude=1.0, frequency=1)
     segment1 = Segment(strip, 0, 50)
     # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
-    g = Gradient(colors=gPreset, resolution=25)
+    # gPreset = GRADIENT_PRESETS["es_vintage_57"]
+    g = Gradient(colors=gPreset, resolution=255)
     blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
+    blink_fx.set_mode("strobe_level")
     loop = Loop()
     def on_frame():
         loop.update()
-        blink_fx.update(loop.delta)
+        signal.update(loop.elapsed_time)
+        blink_fx.update(loop.delta, signal.level)
+        signal.update(loop.elapsed_time)
         visualizer.update()
         # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
         visualizer.root.after(1, on_frame)

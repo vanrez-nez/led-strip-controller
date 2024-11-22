@@ -9,14 +9,35 @@ class BlinkFx(BaseFx):
         self.gradient = gradient
         self.interval = interval
         self.smooth = smooth
+        self._decay = 0.92
+        self._last_level = 0.0
+        self.effect_modes = {
+            "strobe": self.strobe_fx,
+            "smooth": self.smooth_fx,
+            "strobe_level": self.level_strobe_fx,
+            "smooth_level": self.level_smooth_fx,
+        }
 
-    def strobe_effect(self):
+    def level_smooth_fx(self):
+        for pixel in self.segment:
+            pixel.brightness = 255
+            pixel.rgb = self.gradient.get_color(self.signal_level) if self.gradient else self.color
+
+    def level_strobe_fx(self):
+        self._last_level *= self._decay
+        if self.signal_level > self._last_level:
+            self._last_level = self.signal_level
+        for pixel in self.segment:
+            pixel.brightness = 255
+            pixel.rgb = self.gradient.get_color(self._last_level) if self.gradient else self.color
+
+    def strobe_fx(self):
         is_on = np.floor(self.elapsed_time / self.interval) % 2 == 0
         for pixel in self.segment:
             pixel.brightness = 255 if is_on else 0
             pixel.rgb = self.color if is_on else (0, 0, 0)
 
-    def smooth_effect(self):
+    def smooth_fx(self):
         t = self.elapsed_time / self.interval
         t = t - np.floor(t)
         brightness = 255 * np.sin(t * np.pi)
@@ -26,9 +47,3 @@ class BlinkFx(BaseFx):
         for pixel in self.segment:
             pixel.brightness = brightness
             pixel.rgb = color
-
-    def apply_effect(self):
-        if self.smooth:
-            self.smooth_effect()
-        else:
-            self.strobe_effect()
