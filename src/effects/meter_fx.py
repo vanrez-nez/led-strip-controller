@@ -88,7 +88,10 @@ class MeterFx(BaseFx):
 
             # Left peak
             left_peak_pixel = self.segment[center - peak_position - 1]
-            left_peak_pixel.brightness = 255
+            if self.peak_heat > 0.01:
+                left_peak_pixel.brightness = 255
+            else:
+                left_peak_pixel.brightness *= 0.995
             left_peak_pixel.rgb = peak_color
 
             # Right peak
