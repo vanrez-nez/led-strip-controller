@@ -74,7 +74,7 @@ def main():
     # blink_fx.set_mode("smooth_level")
 
     meter_fx = MeterFx(segment1, gradient=g)
-    meter_fx.set_mode("meter")
+    meter_fx.set_mode("meter_sides")
 
     loop = Loop()
     def on_frame():
