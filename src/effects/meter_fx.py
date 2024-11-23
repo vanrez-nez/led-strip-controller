@@ -8,7 +8,7 @@ class MeterFx(BaseFx):
     def __init__(self, segment, gradient: Gradient = None):
         super().__init__(segment)
         self.gradient = gradient
-        self.decay = 0.6
+        self.decay = 0.85
         self.peak_decay = 0.94
         self.last_level = 0.0
         self.show_peak = True
@@ -40,8 +40,7 @@ class MeterFx(BaseFx):
             pixel.brightness = brightness
 
         if self.show_peak:
-            peak_idx = int(min(self.last_peak * len(self.segment), len(self.segment) - 1))
-            if peak_idx < len(self.segment):
-                peak_pixel = self.segment[peak_idx]
-                peak_pixel.brightness = 255
-                peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
+            peak_idx = int(self.last_peak * len(self.segment))
+            peak_pixel = self.segment[peak_idx]
+            peak_pixel.brightness = 255
+            peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
