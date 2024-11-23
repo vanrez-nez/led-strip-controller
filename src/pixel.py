@@ -42,3 +42,7 @@ class Pixel:
     @brightness.setter
     def brightness(self, value):
         self.strip.data[self.index, 3] = value
+
+    def copy(self, pixel):
+        self.rgb = pixel.rgb
+        self.brightness = pixel.brightness
