@@ -2,6 +2,7 @@ from base_fx import BaseFx
 import numpy as np
 from gradient import Gradient
 from color import lerp as lerp_color
+import easing
 
 class MeterFx(BaseFx):
     def __init__(self, segment, gradient: Gradient = None):
@@ -18,34 +19,15 @@ class MeterFx(BaseFx):
             "meter": self.meter_fx,
         }
 
-    def linear_decay(self, value, decay_rate):
-        """Linear decay function."""
-        return value * decay_rate
-
-    def ease_out_quad_decay(self, value, decay_rate):
-        """Easing out quadratic decay where decay starts slow and accelerates."""
-        return value * (1 - (1 - decay_rate) ** 2)
-
-    def ease_in_quad_decay(self, value, decay_rate):
-        """Easing in quadratic decay where decay starts fast and then slows down."""
-        return value * (decay_rate ** 2)
-
-    def ease_in_out_quad_decay(self, value, decay_rate):
-        """Easing in and out quadratic decay for a more natural curve."""
-        if decay_rate < 0.5:
-            return value * (2 * decay_rate ** 2)
-        else:
-            return value * (1 - (2 * (1 - decay_rate) ** 2))
-
     def meter_fx(self):
         # Apply easing decay to last_level
-        self.last_level = self.ease_out_quad_decay(self.last_level, self.decay)
+        self.last_level *= easing.easeInQuad(self.decay)
         if self.level > self.last_level:
             self.last_level = self.level
 
         # Apply easing decay to last_peak
-        self.last_peak = self.ease_out_quad_decay(self.last_peak, self.peak_decay)
-        self.peak_heat = self.ease_in_quad_decay(self.peak_heat, self.peak_heat_decay)
+        self.last_peak *= easing.easeOutQuad(self.peak_decay)
+        self.peak_heat *= easing.easeInQuad(self.peak_heat_decay)
         if self.level > self.last_peak:
             self.peak_heat = 1
             self.last_peak = self.level
@@ -62,4 +44,4 @@ class MeterFx(BaseFx):
             if peak_idx < len(self.segment):
                 peak_pixel = self.segment[peak_idx]
                 peak_pixel.brightness = 255
-                peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 255, 255), self.peak_heat)
+                peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
