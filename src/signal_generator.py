@@ -2,49 +2,26 @@ import numpy as np
 import math
 
 class SignalGenerator:
-    def __init__(self, peak_time=2.0, duration=5.0, amplitude=1.0, frequency=1.0):
-        """
-        Initialize the SignalGenerator.
-
-        Args:
-            peak_time (float): The time at which the signal reaches its peak value.
-            duration (float): The duration of the signal (controls spread).
-            amplitude (float): The maximum amplitude of the signal.
-            frequency (float): The frequency of the periodic signal.
-        """
-        self.peak_time = peak_time
-        self.duration = duration
-        self.amplitude = amplitude
+    def __init__(self, frequency=1.0, shape=1.0):
+        self.shape = shape
         self.frequency = frequency
         self.level = 0.0
 
     def update(self, elapsed_time_ms):
-        """
-        Update the level of the signal based on the elapsed time.
+        # Calculate the full cycle length based on frequency
+        wave_length = (2 * math.pi) / self.frequency
+        phase = (elapsed_time_ms / 1000) % wave_length
 
-        Args:
-            elapsed_time_ms (float): The time that has elapsed, in milliseconds.
-        """
-        # Convert elapsed time from milliseconds to seconds
-        elapsed_time = elapsed_time_ms / 1000.0
-
-        # Calculate the periodic Gaussian-like signal value
-        gaussian = math.exp(-((elapsed_time % (1 / self.frequency) - self.peak_time) ** 2) / (2 * self.duration ** 2))
-        oscillation = (math.sin(2 * math.pi * self.frequency * elapsed_time) + 1) * 0.5
-        self.level = self.amplitude * gaussian * oscillation
+        # Calculate sine value and adjust shape using power function
+        sine_value = math.sin((phase / wave_length) * math.pi)
+        self.level = sine_value ** self.shape  # Use shape parameter to control the curve shape
 
     def get_level(self):
-        """
-        Get the current level of the signal.
-
-        Returns:
-            float: The current level of the signal.
-        """
         return self.level
 
 # Example usage
 if __name__ == "__main__":
-    signal = SignalGenerator(peak_time=1, duration=0.1, amplitude=1.0, frequency=0.5)
+    signal = SignalGenerator(frequency=2.0, shape=10.0)
     total_time_ms = 10000  # Total time in milliseconds
     fps = 60  # Frames per second
     num_samples = int(total_time_ms / 1000.0 * fps)  # Number of samples for 60 fps
