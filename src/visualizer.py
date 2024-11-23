@@ -18,8 +18,8 @@ class StripVisualizer:
         self.root.title("LED Strip Visualization")
 
         # Define LED size and spacing
-        self.led_size = 20
-        self.spacing = 5
+        self.led_size = 10
+        self.spacing = 2
         width = (self.led_size + self.spacing) * num_leds + self.spacing
         height = self.led_size + 2 * self.spacing
 
@@ -62,12 +62,12 @@ class StripVisualizer:
         self.canvas.update()
 
 def main():
-    strip = Strip(50)
+    strip = Strip(100)
     visualizer = StripVisualizer(strip)
     signal = SignalGenerator(frequency=10.0, shape=250.0)
-    segment1 = Segment(strip, 0, 50)
+    segment1 = Segment(strip, 0, 100)
     # segment2 = Segment(strip, 40, 50, direction=-1)
-    gPreset = GRADIENT_PRESETS["red_flash"]
+    gPreset = GRADIENT_PRESETS["Analogous_1"]
     # gPreset = GRADIENT_PRESETS["es_vintage_57"]
     g = Gradient(colors=gPreset, resolution=255)
     # blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
