@@ -3,6 +3,7 @@ from strip import Strip
 from segment import Segment
 import tkinter as tk
 from effects.blink_fx import BlinkFx
+from effects.meter_fx import MeterFx
 from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
@@ -63,19 +64,23 @@ class StripVisualizer:
 def main():
     strip = Strip(50)
     visualizer = StripVisualizer(strip)
-    signal = SignalGenerator(peak_time=1, duration=0.25, amplitude=1.0, frequency=1)
+    signal = SignalGenerator(frequency=10.0, shape=250.0)
     segment1 = Segment(strip, 0, 50)
     # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
     # gPreset = GRADIENT_PRESETS["es_vintage_57"]
     g = Gradient(colors=gPreset, resolution=255)
-    blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
-    blink_fx.set_mode("strobe_level")
+    # blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
+    # blink_fx.set_mode("smooth_level")
+
+    meter_fx = MeterFx(segment1, gradient=g)
+
     loop = Loop()
     def on_frame():
         loop.update()
         signal.update(loop.elapsed_time)
-        blink_fx.update(loop.delta, signal.level)
+        # blink_fx.update(loop.delta, signal.level)
+        meter_fx.update(loop.delta, signal.level)
         signal.update(loop.elapsed_time)
         visualizer.update()
         # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
