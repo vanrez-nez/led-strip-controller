@@ -8,6 +8,7 @@ from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
 from signal_generator import SignalGenerator
+from dsp_processor import DSPProcessor
 
 class StripVisualizer:
     def __init__(self, strip):
@@ -75,13 +76,18 @@ def main():
 
     meter_fx = MeterFx(segment1, gradient=g)
     meter_fx.set_mode("meter_sides")
-
+    processor = DSPProcessor()
+    processor.start()
     loop = Loop()
+
     def on_frame():
         loop.update()
+        processor.update()
+
         signal.update(loop.elapsed_time)
         # blink_fx.update(loop.delta, signal.level)
-        meter_fx.update(loop.delta, signal.level)
+        # meter_fx.update(loop.delta, signal.level)
+        meter_fx.update(loop.delta, processor.level)
         signal.update(loop.elapsed_time)
         visualizer.update()
         # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")

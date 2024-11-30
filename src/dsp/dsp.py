@@ -19,7 +19,8 @@ class ExpFilter:
             alpha[alpha > 0.0] = self.alpha_rise
             alpha[alpha <= 0.0] = self.alpha_decay
         else:
-            alpha = self.alpha_rise if value > self.value else self.alpha_decay
+            # alpha = self.alpha_rise if value > self.value else self.alpha_decay
+            alpha = np.where(value > self.value, self.alpha_rise, self.alpha_decay)
         self.value = alpha * value + (1.0 - alpha) * self.value
         return self.value
 
