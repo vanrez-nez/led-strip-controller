@@ -49,7 +49,7 @@ class MeterFx(BaseFx):
                 pixel.brightness = 255
 
         if self.show_peak:
-            peak_idx = int(self.last_peak * len(self.segment))
+            peak_idx = np.clip(int(self.last_peak * len(self.segment)), 0, len(self.segment) - 1)
             peak_pixel = self.segment[peak_idx]
             peak_pixel.brightness = 255
             peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)

@@ -73,17 +73,16 @@ def main():
     g = Gradient(colors=gPreset, resolution=255)
     # blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
     # blink_fx.set_mode("smooth_level")
-
     meter_fx = MeterFx(segment1, gradient=g)
-    meter_fx.set_mode("meter_sides")
+    # meter_fx.set_mode("meter")
     processor = DSPProcessor()
     processor.start()
     loop = Loop()
 
     def on_frame():
-        loop.update()
         processor.update()
-
+        loop.update()
+        # loop.print_fps()
         signal.update(loop.elapsed_time)
         # blink_fx.update(loop.delta, signal.level)
         # meter_fx.update(loop.delta, signal.level)

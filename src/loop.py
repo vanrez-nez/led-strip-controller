@@ -11,3 +11,6 @@ class Loop:
         self.delta = current_time - self.last_time
         self.elapsed_time += self.delta
         self.last_time = current_time
+
+    def print_fps(self):
+        print(f"FPS: {1000 / self.delta:.2f}")
