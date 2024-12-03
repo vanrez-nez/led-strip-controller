@@ -25,13 +25,13 @@ class BlinkFx(BaseFx):
             pixel.brightness = brightness
 
     def level_smooth_fx(self):
-        self._set_color(self.level)
-
-    def level_strobe_fx(self):
         self._last_level *= self._decay
         if self.level > self._last_level:
             self._last_level = self.level
         self._set_color(self._last_level)
+
+    def level_strobe_fx(self):
+        self._set_color(self.level)
 
     def strobe_fx(self):
         is_on = np.floor(self.elapsed_time / self.interval) % 2 == 0

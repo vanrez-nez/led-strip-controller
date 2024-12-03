@@ -72,7 +72,7 @@ def main():
     # gPreset = GRADIENT_PRESETS["es_vintage_57"]
     g = Gradient(colors=gPreset, resolution=255)
     blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
-    blink_fx.set_mode("strobe_level")
+    blink_fx.set_mode("smooth_level")
     # meter_fx = MeterFx(segment1, gradient=g)
     # meter_fx.set_mode("meter_sides")
     processor = DSPProcessor()
