@@ -7,8 +7,8 @@ from effects.meter_fx import MeterFx
 from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
-from signal_generator import SignalGenerator
 from dsp_processor import DSPProcessor
+from effect_manager import EffectManager
 
 class StripVisualizer:
     def __init__(self, strip):
@@ -65,7 +65,6 @@ class StripVisualizer:
 def main():
     strip = Strip(50)
     visualizer = StripVisualizer(strip)
-    signal = SignalGenerator(frequency=10.0, shape=250.0)
     segment1 = Segment(strip, 0, 50)
     # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
@@ -73,22 +72,24 @@ def main():
     g = Gradient(colors=gPreset, resolution=255)
     blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
     blink_fx.set_mode("smooth_level")
-    # meter_fx = MeterFx(segment1, gradient=g)
-    # meter_fx.set_mode("meter_sides")
+    meter_fx = MeterFx(segment1, gradient=g)
+    meter_fx.set_mode("meter_sides")
     processor = DSPProcessor()
+    effectManager = EffectManager(mode="auto_cycle", time_cycle_duration=30000)
+    effectManager.add(blink_fx)
+    effectManager.add(meter_fx)
     processor.start()
     loop = Loop()
 
     def on_frame():
         loop.update()
         processor.update()
-
         # loop.print_fps()
-        signal.update(loop.elapsed_time)
-        blink_fx.update(loop.delta, processor.level)
-        # meter_fx.update(loop.delta, signal.level)
+        # blink_fx.update(loop.delta, processor.level)
         # meter_fx.update(loop.delta, processor.level)
         # signal.update(loop.elapsed_time)
+        # print(loop.elapsed_time)
+        effectManager.update(loop.delta, processor.level)
         visualizer.update()
         # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
         visualizer.root.after(1, on_frame)
