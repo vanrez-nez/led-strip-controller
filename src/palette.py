@@ -544,10 +544,8 @@ GRADIENT_PRESETS = {
 
     "red_flash": [
         GradientColor(r=0, g=0, b=0, position=0.0 / 255),
-        GradientColor(r=227, g=1, b=1, position=99.0 / 255),
-        GradientColor(r=249, g=199, b=95, position=130.0 / 255),
-        GradientColor(r=227, g=1, b=1, position=155.0 / 255),
-        GradientColor(r=0, g=0, b=0, position=255.0 / 255),
+        GradientColor(r=227, g=1, b=1, position=130.0 / 255),
+        GradientColor(r=249, g=199, b=95, position=255 / 255)
     ],
 
     "blink_red": [

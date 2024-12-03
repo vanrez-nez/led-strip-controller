@@ -10,13 +10,13 @@ class MeterFx(BaseFx):
         super().__init__(segment)
         self.gradient = gradient
         self.decay = 0.85
-        self.peak_decay = 0.94
+        self.peak_decay = 0.98
         self.last_level = 0.0
         self.show_peak = True
-        self.ghost_decay = 0.75
+        self.ghost_decay = 0.65
         self.peak_heat = 0.0
-        self.peak_heat_decay = 0.95
-        self.last_peak = 0.0
+        self.peak_heat_decay = 0.9
+        self.last_peak = 0
         self.effect_modes = {
             "meter": self.meter_fx,
             "meter_center": self.meter_center_fx,
@@ -25,34 +25,32 @@ class MeterFx(BaseFx):
 
     def update_decay(self):
         # Apply easing decay to last_level
-        self.last_level *= easing.easeInQuad(self.decay)
+        self.last_level *= self.decay
         if self.level > self.last_level:
             self.last_level = self.level
 
         # Apply easing decay to last_peak
-        self.last_peak *= easing.easeOutQuad(self.peak_decay)
-        self.peak_heat *= easing.easeInQuad(self.peak_heat_decay)
-        if self.level > self.last_peak:
+        self.last_peak *= np.clip(easing.easeOutSine(self.last_peak * self.peak_decay), 0.95, 1)
+        self.peak_heat *= np.clip(easing.easeOutSine(self.peak_heat * self.peak_heat_decay), 0.92, 1)
+        if self.last_level > self.last_peak:
+            self.last_peak = self.last_level
             self.peak_heat = 1
-            self.last_peak = self.level
 
     def meter_fx(self):
         self.update_decay()
+        peak_idx = int(self.last_peak * len(self.segment))
         for idx, pixel in enumerate(self.segment):
             i = self.last_level * len(self.segment)
-            color_pos = (idx + 1) / len(self.segment)
-            color = self.gradient.get_color(color_pos)
-            if i <= idx:
-                pixel.brightness *= self.ghost_decay
-            else:
+            if (idx == peak_idx) and self.show_peak:
+                pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
+                pixel.brightness = 255
+            elif i >= idx:
+                color_pos = (idx + 1) / len(self.segment)
+                color = self.gradient.get_color(color_pos)
                 pixel.rgb = color
                 pixel.brightness = 255
-
-        if self.show_peak:
-            peak_idx = np.clip(int(self.last_peak * len(self.segment)), 0, len(self.segment) - 1)
-            peak_pixel = self.segment[peak_idx]
-            peak_pixel.brightness = 255
-            peak_pixel.rgb = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
+            else:
+                pixel.brightness *= self.ghost_decay
 
     def meter_center_fx(self):
         self.update_decay()
@@ -78,13 +76,13 @@ class MeterFx(BaseFx):
                 left_pixel.rgb = color
                 left_pixel.brightness = brightness
 
-            # Right side
+            #Right side
             right_pixel = self.segment[center + idx]
             right_pixel.copy(left_pixel)
 
         # Show peak if enabled
         if self.show_peak:
-            peak_position = int(self.last_peak * center)
+            peak_position = np.clip(int(self.last_peak * center), 0, center - 1)
             peak_color = lerp_color(self.gradient.get_color(self.last_peak), (255, 250, 250), self.peak_heat)
 
             # Left peak

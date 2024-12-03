@@ -63,31 +63,32 @@ class StripVisualizer:
         self.canvas.update()
 
 def main():
-    strip = Strip(100)
+    strip = Strip(50)
     visualizer = StripVisualizer(strip)
     signal = SignalGenerator(frequency=10.0, shape=250.0)
-    segment1 = Segment(strip, 0, 100)
+    segment1 = Segment(strip, 0, 50)
     # segment2 = Segment(strip, 40, 50, direction=-1)
-    gPreset = GRADIENT_PRESETS["Analogous_1"]
+    gPreset = GRADIENT_PRESETS["red_flash"]
     # gPreset = GRADIENT_PRESETS["es_vintage_57"]
     g = Gradient(colors=gPreset, resolution=255)
-    # blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
-    # blink_fx.set_mode("smooth_level")
-    meter_fx = MeterFx(segment1, gradient=g)
-    # meter_fx.set_mode("meter")
+    blink_fx = BlinkFx(segment1, color=(255, 0, 0), interval=500, smooth=True, gradient=g)
+    blink_fx.set_mode("strobe_level")
+    # meter_fx = MeterFx(segment1, gradient=g)
+    # meter_fx.set_mode("meter_sides")
     processor = DSPProcessor()
     processor.start()
     loop = Loop()
 
     def on_frame():
-        processor.update()
         loop.update()
+        processor.update()
+
         # loop.print_fps()
         signal.update(loop.elapsed_time)
-        # blink_fx.update(loop.delta, signal.level)
+        blink_fx.update(loop.delta, processor.level)
         # meter_fx.update(loop.delta, signal.level)
-        meter_fx.update(loop.delta, processor.level)
-        signal.update(loop.elapsed_time)
+        # meter_fx.update(loop.delta, processor.level)
+        # signal.update(loop.elapsed_time)
         visualizer.update()
         # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
         visualizer.root.after(1, on_frame)

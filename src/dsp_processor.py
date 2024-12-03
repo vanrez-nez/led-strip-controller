@@ -63,7 +63,7 @@ class DSPProcessor:
         # Energy normalization
         self.gain.update(mel)
         level = mel / self.gain.value
-        return level
+        return level[0]
 
     def start(self):
         """Start the audio stream."""
