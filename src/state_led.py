@@ -1,0 +1,29 @@
+try:
+    import RPi.GPIO as GPIO
+    import config as config
+    gpio_available = True
+except ImportError:
+    gpio_available = False
+
+def not_gpio_available(call_str):
+    print(f"RPi.GPIO library is not installed or available. {call_str}")
+    return None
+
+def set_up():
+    if not gpio_available:
+        return not_gpio_available('set_up()')
+    GPIO.setmode(GPIO.BCM)  # Use BCM GPIO numbering
+    GPIO.setup(config.LED_STATUS_GPIO_PIN, GPIO.OUT)
+    GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.LOW)
+
+def set_led_up():
+    if not gpio_available:
+        return not_gpio_available('set_led_up()')
+    GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.HIGH)
+
+def set_led_down():
+    if not gpio_available:
+        return not_gpio_available('set_led_down()')
+    GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.HIGH)
+
+set_up()
