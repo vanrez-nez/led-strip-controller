@@ -13,5 +13,5 @@
 5. Run the project: `python main.py`
 
 ## On the Raspberry Pi
-1. Once inside the virtual environment you'll need to install the GPIO library: `pip install RPi.GPIO`
+1. Once inside the virtual environment you'll need to install the GPIO library: `pip install RPi.GPIO` and `pip install rpi_ws281x`
 2. Because the GPIO library requires root access, you'll need to run the script with `sudo` (before activating your virtual env): `sudo ./venv/bin/python src/visualizer.py`
