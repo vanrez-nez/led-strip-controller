@@ -5,13 +5,13 @@ from effects.meter_fx import MeterFx
 from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
-from state_led import set_led_down, set_led_up, led_clean_up
+from status_led import set_led_down, set_led_up, led_clean_up
 from dsp_processor import DSPProcessor
 from effect_manager import EffectManager
 
 def main():
-    strip = Strip(50)
-    segment1 = Segment(strip, 0, 50)
+    strip = Strip(num_leds=60, gpio_pin=18, dma_channel=10, pwm_channel=0)
+    segment1 = Segment(strip, 0, 30)
     # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
     # gPreset = GRADIENT_PRESETS["es_vintage_57"]
@@ -31,11 +31,13 @@ def main():
         while True:
             loop.update()
             processor.update()
-            # loop.print_fps()
+            loop.print_fps()
             effectManager.update(loop.delta, processor.level)
+            strip.push()
     except KeyboardInterrupt:
         set_led_down()
         led_clean_up()
+        strip.cleanup()
         effectManager.clear()
 
 if __name__ == "__main__":

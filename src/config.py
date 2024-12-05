@@ -30,3 +30,6 @@ DSP_MIN_VOLUME_THRESHOLD = 1e-7
 
 # The GPIO pin number for the LED status indicator (BCM numbering)
 LED_STATUS_GPIO_PIN = 5
+
+STRIP_FREQ_HZ = 800000
+STRIP_BRIGHTNESS = 255
