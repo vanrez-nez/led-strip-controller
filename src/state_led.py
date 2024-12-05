@@ -27,3 +27,10 @@ def set_led_down():
     GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.LOW)
 
 set_up()
+
+if __name__ == "__main__":
+    # Test the LED functions by blinking the LED
+    import time
+    set_led_up()
+    time.sleep(1)
+    set_led_down()
