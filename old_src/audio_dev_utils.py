@@ -3,7 +3,7 @@
 import pyaudio
 import time
 import numpy as np
-import dsp.config as config
+import config as config
 
 def list_input_devices(p):
     """Lists all available audio input devices."""
@@ -17,13 +17,13 @@ def start_stream(callback):
     """Starts the audio stream and continuously feeds data to the callback."""
     p = pyaudio.PyAudio()
     # list_input_devices(p)
-    frames_per_buffer = int(config.RATE / config.FPS)
+    frames_per_buffer = int(config.DSP_RATE / config.DSP_FPS)
     stream = p.open(format=pyaudio.paInt16,
                     channels=1,
-                    rate=config.RATE,
+                    rate=config.DSP_RATE,
                     input=True,
                     frames_per_buffer=frames_per_buffer,
-                    input_device_index=config.DEVICE_INDEX)
+                    input_device_index=config.DSP_DEVICE_INDEX)
     overflows = 0
     prev_ovf_time = time.time()
     try:

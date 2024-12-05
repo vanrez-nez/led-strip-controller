@@ -1,7 +1,7 @@
 # reactive.py
 
 import numpy as np
-import dsp.config as config
+import config as config
 import time
 import dsp
 import audio_dev_utils
@@ -17,7 +17,7 @@ fft_window = np.hamming(config.N_FFT)  # e.g., 2048 samples
 dsp.create_mel_bank()  # Initializes mel_y with shape (5, 1025)
 
 # Initialize smoothing filter
-mel_smoothing = dsp.ExpFilter(np.zeros(config.N_FFT_BINS), alpha_decay=0.5, alpha_rise=0.5)
+mel_smoothing = dsp.ExpFilter(np.zeros(config.DSP_N_FFT_BINS), alpha_decay=0.5, alpha_rise=0.5)
 
 def audio_update(audio_samples):
     global y_roll
@@ -31,10 +31,10 @@ def audio_update(audio_samples):
 
     # Check volume threshold
     vol = np.max(np.abs(y_data))
-    if vol < config.MIN_VOLUME_THRESHOLD:
+    if vol < config.DSP_MIN_VOLUME_THRESHOLD:
         print('No audio input. Volume below threshold.')
         # Optional: Avoid updating LEDs when volume is too low
-        led_utils.set_levels([0] * config.N_FFT_BINS)
+        led_utils.set_levels([0] * config.DSP_N_FFT_BINS)
         return
 
     print(f"Volume: {vol}")  # Log volume
@@ -70,8 +70,8 @@ def audio_update(audio_samples):
     # print("mel_spec_smoothed:", mel_spec_smoothed)
 
     # Map to LED levels (0 to N_FFT_BINS)
-    led_levels = (mel_spec_smoothed * config.N_FFT_BINS).astype(int)
-    led_levels = np.clip(led_levels, 0, config.N_FFT_BINS)
+    led_levels = (mel_spec_smoothed * config.DSP_N_FFT_BINS).astype(int)
+    led_levels = np.clip(led_levels, 0, config.DSP_N_FFT_BINS)
     # print("LED Levels:", led_levels)
 
     # Update LEDs
@@ -83,19 +83,19 @@ def test_leds():
     Sets all LEDs to each level sequentially with a short delay.
     """
     print("Starting LED test...")
-    for level in range(0, config.N_FFT_BINS + 1):  # Levels 0 to 5
-        levels = [level] * config.N_FFT_BINS  # Set all LEDs to the current level
+    for level in range(0, config.DSP_N_FFT_BINS + 1):  # Levels 0 to 5
+        levels = [level] * config.DSP_N_FFT_BINS  # Set all LEDs to the current level
         print(f"Setting LEDs to: {levels}")
         led_utils.set_levels(levels)
         time.sleep(0.5)  # Wait for 0.5 seconds
     print("LED test completed. Turning off LEDs.")
-    led_utils.set_levels([0] * config.N_FFT_BINS)  # Turn off all LEDs
+    led_utils.set_levels([0] * config.DSP_N_FFT_BINS)  # Turn off all LEDs
     time.sleep(0.5)  # Short pause after turning off
 
 if __name__ == '__main__':
     dsp.create_mel_bank()  # Ensure Mel filterbank is initialized
     test_leds()  # Execute the LED test function
-    led_utils.set_levels([0] * config.N_FFT_BINS)  # Initialize LEDs to off
+    led_utils.set_levels([0] * config.DSP_N_FFT_BINS)  # Initialize LEDs to off
     try:
         audio_dev_utils.start_stream(audio_update)
     except KeyboardInterrupt:

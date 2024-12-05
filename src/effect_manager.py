@@ -71,6 +71,11 @@ class EffectManager:
                     self.time_since_last_switch >= self.time_cycle_duration):
                 self.next()
 
+    def clear(self):
+        """Clear all effects."""
+        self.effects = []
+        self.current_index = 0
+
     def list_effects(self):
         """List all effects and their configurations for debugging."""
         for idx, effect in enumerate(self.effects):

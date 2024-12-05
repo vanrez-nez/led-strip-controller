@@ -10,7 +10,7 @@ import raspberry_pi_test
 _time_prev = time.time() * 1000.0
 """The previous time that the frames_per_second() function was called"""
 
-_fps = dsp.ExpFilter(val=config.FPS, alpha_decay=0.2, alpha_rise=0.2)
+_fps = dsp.ExpFilter(val=config.DSP_FPS, alpha_decay=0.2, alpha_rise=0.2)
 """The low-pass filter used to estimate frames-per-second"""
 
 
@@ -97,7 +97,7 @@ def interpolate(y, new_length):
 # p_filt = dsp.ExpFilter(np.tile(1, (3, config.N_PIXELS // 2)),
 #                        alpha_decay=0.1, alpha_rise=0.99)
 # p = np.tile(1.0, (3, config.N_PIXELS // 2))
-gain = dsp.ExpFilter(np.tile(0.01, config.N_FFT_BINS),
+gain = dsp.ExpFilter(np.tile(0.01, config.DSP_N_FFT_BINS),
                      alpha_decay=0.001, alpha_rise=0.99)
 
 
@@ -156,15 +156,15 @@ _prev_spectrum = np.tile(0.01, config.N_PIXELS // 2)
 #     return output
 
 
-fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.DSP_N_FFT_BINS),
                          alpha_decay=0.5, alpha_rise=0.99)
-mel_gain = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+mel_gain = dsp.ExpFilter(np.tile(1e-1, config.DSP_N_FFT_BINS),
                          alpha_decay=0.01, alpha_rise=0.99)
-mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
+mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.DSP_N_FFT_BINS),
                          alpha_decay=0.5, alpha_rise=0.99)
-volume = dsp.ExpFilter(config.MIN_VOLUME_THRESHOLD,
+volume = dsp.ExpFilter(config.DSP_MIN_VOLUME_THRESHOLD,
                        alpha_decay=0.02, alpha_rise=0.02)
-fft_window = np.hamming(int(config.RATE / config.FPS) * config.N_ROLLING_HISTORY)
+fft_window = np.hamming(int(config.DSP_RATE / config.DSP_FPS) * config.DSP_N_ROLLING_HISTORY)
 prev_fps_update = time.time()
 
 
@@ -178,7 +178,7 @@ def audio_update(audio_samples):
     y_data = np.concatenate(y_roll, axis=0).astype(np.float32)
 
     vol = np.max(np.abs(y_data))
-    if vol < config.MIN_VOLUME_THRESHOLD:
+    if vol < config.DSP_MIN_VOLUME_THRESHOLD:
         print('No audio input. Volume below threshold. Volume:', vol)
         # led.pixels = np.tile(0, (3, config.N_PIXELS))
         # led.update()
@@ -209,10 +209,10 @@ def audio_update(audio_samples):
         raspberry_pi_test.set_gradient_led(level, gradient_colors)
 
 # Number of audio samples to read every time frame
-samples_per_frame = int(config.RATE / config.FPS)
+samples_per_frame = int(config.DSP_RATE / config.DSP_FPS)
 
 # Array containing the rolling audio sample window
-y_roll = np.random.rand(config.N_ROLLING_HISTORY, samples_per_frame) / 1e16
+y_roll = np.random.rand(config.DSP_N_ROLLING_HISTORY, samples_per_frame) / 1e16
 
 visualization_effect = visualize_energy
 """Visualization effect to display on the LED strip"""

@@ -1,13 +1,13 @@
 import pyaudio
 import time
 import numpy as np
-import dsp.config as config
+import config as config
 
 class AudioStream:
     def __init__(self):
         """Initialize the DSP Processor."""
         self.p = pyaudio.PyAudio()
-        self.frames_per_buffer = int(config.RATE / config.FPS)
+        self.frames_per_buffer = int(config.DSP_RATE / config.DSP_FPS)
         self.stream = None
         self.audio_data = None  # Store the latest audio data
         self.running = False  # Indicates whether the stream is running
@@ -28,7 +28,7 @@ class AudioStream:
         if self.running:
             print("DSP Processor is already running.")
             return
-        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=config.RATE, input=True, frames_per_buffer=self.frames_per_buffer, input_device_index=config.DEVICE_INDEX)
+        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=config.DSP_RATE, input=True, frames_per_buffer=self.frames_per_buffer, input_device_index=config.DSP_DEVICE_INDEX)
         self.running = True
         print("DSP Processor started.")
 

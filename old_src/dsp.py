@@ -1,5 +1,5 @@
 import numpy as np
-import dsp.config as config
+import config as config
 import melbank
 
 class ExpFilter:
@@ -26,25 +26,25 @@ class ExpFilter:
 def rfft(data, window=None):
     window = 1.0 if window is None else window(len(data))
     ys = np.abs(np.fft.rfft(data * window))
-    xs = np.fft.rfftfreq(len(data), 1.0 / config.RATE)
+    xs = np.fft.rfftfreq(len(data), 1.0 / config.DSP_RATE)
     return xs, ys
 
 
 def fft(data, window=None):
     window = 1.0 if window is None else window(len(data))
     ys = np.fft.fft(data * window)
-    xs = np.fft.fftfreq(len(data), 1.0 / config.RATE)
+    xs = np.fft.fftfreq(len(data), 1.0 / config.DSP_RATE)
     return xs, ys
 
 
 def create_mel_bank():
     global samples, mel_y, mel_x
-    samples = int(config.RATE * config.N_ROLLING_HISTORY / (2.0 * config.FPS))
-    mel_y, (_, mel_x) = melbank.compute_melmat(num_mel_bands=config.N_FFT_BINS,
-                                               freq_min=config.MIN_FREQUENCY,
-                                               freq_max=config.MAX_FREQUENCY,
+    samples = int(config.DSP_RATE * config.DSP_N_ROLLING_HISTORY / (2.0 * config.DSP_FPS))
+    mel_y, (_, mel_x) = melbank.compute_melmat(num_mel_bands=config.DSP_N_FFT_BINS,
+                                               freq_min=config.DSP_MIN_FREQUENCY,
+                                               freq_max=config.DSP_MAX_FREQUENCY,
                                                num_fft_bands=samples,
-                                               sample_rate=config.RATE)
+                                               sample_rate=config.DSP_RATE)
 samples = None
 mel_y = None
 mel_x = None

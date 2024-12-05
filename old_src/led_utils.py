@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import dsp.config as config
+import config as config
 
 # GPIO pin numbers for your 5 LEDs (adjust as per your hardware setup)
 LED_PINS = [17, 27, 22, 5, 6]
