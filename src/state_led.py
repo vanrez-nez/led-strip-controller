@@ -24,6 +24,6 @@ def set_led_up():
 def set_led_down():
     if not gpio_available:
         return not_gpio_available('set_led_down()')
-    GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.HIGH)
+    GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.LOW)
 
 set_up()
