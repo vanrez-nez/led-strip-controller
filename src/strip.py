@@ -46,6 +46,6 @@ class Strip:
             return
         for i in range(len(self.data)):
             r, g, b, brightness = self.data[i]
-            print(r, g, b, brightness)
-            self.strip.setPixelColorRGB(i, r, g, b)
+            self.strip.setBrightness(int(brightness))
+            self.strip.setPixelColorRGB(i, int(r), int(g), int(b))
         self.strip.show()
