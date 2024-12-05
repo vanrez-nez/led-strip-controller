@@ -48,10 +48,3 @@ class Strip:
             r, g, b, brightness = self.data[i]
             self.strip.setPixelColorRGB(i, r, g, b)
         self.strip.show()
-
-    def cleanup(self):
-        """Clean up the LED strip."""
-        if not rpi_ws281x_available:
-            self.print_error("cleanup")
-            return
-        self.strip.cleanup()

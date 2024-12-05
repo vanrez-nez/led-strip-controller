@@ -32,13 +32,12 @@ def main():
         while True:
             loop.update()
             processor.update()
-            loop.print_fps()
+            # loop.print_fps()
             effectManager.update(loop.delta, processor.level)
             strip.push()
     except KeyboardInterrupt:
         set_led_down()
         led_clean_up()
-        strip.cleanup()
         effectManager.clear()
 
 if __name__ == "__main__":
