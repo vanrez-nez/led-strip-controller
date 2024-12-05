@@ -31,8 +31,8 @@ class Strip:
             channel=self.pwm_channel,
             dma=self.dma_channel,
             invert=self.invert,
-            brightness=cfg.LED_BRIGHTNESS,
-            freq_hz=cfg.LED_FREQ_HZ)
+            brightness=cfg.STRIP_LED_BRIGHTNESS,
+            freq_hz=cfg.STRIP_LED_FREQ_HZ)
         strip.begin()
         return strip
 
