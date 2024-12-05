@@ -58,7 +58,7 @@ class EffectManager:
             return
         self.current_effect.update(delta_ms, level)
         self.time_since_last_switch += delta_ms
-        print(self.time_since_last_switch)
+        # print(self.time_since_last_switch)
         if self.mode == 'time_cycle':
             if self.time_since_last_switch >= self.time_cycle_duration:
                 self.next()

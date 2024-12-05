@@ -10,7 +10,7 @@ from palette import GRADIENT_PRESETS
 from dsp_processor import DSPProcessor
 from effect_manager import EffectManager
 
-class StripVisualizer:
+class GuiStripVisualizer:
     def __init__(self, strip):
         self.strip = strip
         num_leds = len(strip)
@@ -64,7 +64,7 @@ class StripVisualizer:
 
 def main():
     strip = Strip(50)
-    visualizer = StripVisualizer(strip)
+    visualizer = GuiStripVisualizer(strip)
     segment1 = Segment(strip, 0, 50)
     # segment2 = Segment(strip, 40, 50, direction=-1)
     gPreset = GRADIENT_PRESETS["red_flash"]
@@ -85,13 +85,8 @@ def main():
         loop.update()
         processor.update()
         # loop.print_fps()
-        # blink_fx.update(loop.delta, processor.level)
-        # meter_fx.update(loop.delta, processor.level)
-        # signal.update(loop.elapsed_time)
-        # print(loop.elapsed_time)
         effectManager.update(loop.delta, processor.level)
         visualizer.update()
-        # print(f"Elapsed time: {loop.elapsed_time:.2f} ms")
         visualizer.root.after(1, on_frame)
     visualizer.root.after(1, on_frame)
     try:
