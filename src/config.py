@@ -19,7 +19,7 @@ DSP_MIN_FREQUENCY = 20
 # Maximum frequency for Mel filterbank in Hz
 DSP_MAX_FREQUENCY = 160
 # Audio device index to use
-DSP_DEVICE_INDEX = os.getenv("DSP_DEVICE_INDEX", 0)
+DSP_DEVICE_INDEX = int(os.getenv("DSP_DEVICE_INDEX", 0))
 # Minimum volume threshold for audio input
 DSP_MIN_VOLUME_THRESHOLD = 1e-7
 

@@ -12,8 +12,7 @@ class AudioStream:
         self.audio_data = None  # Store the latest audio data
         self.running = False  # Indicates whether the stream is running
 
-    @classmethod
-    def list_input_devices(cls):
+    def list_input_devices(self):
         """Lists all available audio input devices."""
         p = pyaudio.PyAudio()
         print("Available audio input devices:")
@@ -25,11 +24,13 @@ class AudioStream:
 
     def start(self):
         """Start the audio stream."""
+        self.list_input_devices()
         if self.running:
             print("DSP Processor is already running.")
             return
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=config.DSP_RATE, input=True, frames_per_buffer=self.frames_per_buffer, input_device_index=config.DSP_DEVICE_INDEX)
         self.running = True
+
         print("DSP Processor started.")
 
     def stop(self):
