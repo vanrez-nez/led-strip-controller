@@ -5,7 +5,7 @@ from effects.meter_fx import MeterFx
 from loop import Loop
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
-from state_led import set_led_down, set_led_up
+from state_led import set_led_down, set_led_up, led_clean_up
 from dsp_processor import DSPProcessor
 from effect_manager import EffectManager
 
@@ -35,6 +35,7 @@ def main():
             effectManager.update(loop.delta, processor.level)
     except KeyboardInterrupt:
         set_led_down()
+        led_clean_up()
         effectManager.clear()
 
 if __name__ == "__main__":

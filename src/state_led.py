@@ -16,6 +16,11 @@ def set_up():
     GPIO.setup(config.LED_STATUS_GPIO_PIN, GPIO.OUT)
     GPIO.output(config.LED_STATUS_GPIO_PIN, GPIO.LOW)
 
+def clean_up():
+    if not gpio_available:
+        return not_gpio_available('clean_up()')
+    GPIO.cleanup()
+
 def set_led_up():
     if not gpio_available:
         return not_gpio_available('set_led_up()')
@@ -34,3 +39,4 @@ if __name__ == "__main__":
     set_led_up()
     time.sleep(1)
     set_led_down()
+    clean_up()
