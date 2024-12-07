@@ -31,7 +31,7 @@ def main():
         meter_fx_r1
     ])
     processor.start()
-    loop = Loop()
+    loop = Loop(mode="avg", avg_interval=2.0)
     try:
         set_led_up()
         while True:
