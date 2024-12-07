@@ -21,6 +21,7 @@ class BlinkFx(BaseFx):
     def _set_color(self, t, brightness=255):
         use_gradient = self.gradient and t is not None
         color = self.gradient.get_color(t) if use_gradient else self.color
+        self.gradient.shift_color_group(self.elapsed_time * 0.0001)
         for pixel in self.segment:
             pixel.rgb = color
             pixel.brightness = brightness

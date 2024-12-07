@@ -3,6 +3,9 @@ from multi_segment import MultiSegment
 from effects.meter_fx import MeterFx
 from effects.blink_fx import BlinkFx
 from effects.cop_fx import CopFx
+from effects.random_fx import RandomFx
+from effects.scroll_fx import ScrollFx
+
 from gradient import Gradient
 from palette import GRADIENT_PRESETS
 
@@ -71,4 +74,48 @@ def add_cop_fx(effectManager, leftStrip, rightStrip):
   effectManager.add([
       fx_left,
       fx_right
+  ])
+
+def add_random_fx(effectManager, leftStrip, rightStrip, color_preset):
+  ml1 = create_strip_segment(leftStrip, 0, 30, 60, 90)
+  ml2 = create_strip_segment(leftStrip, 30, 60, 90, 120)
+  mr1 = create_strip_segment(rightStrip, 0, 30, 60, 90)
+  mr2 = create_strip_segment(rightStrip, 30, 60, 90, 120)
+
+  g = Gradient(resolution=512)
+  g.add_color_group(GRADIENT_PRESETS[color_preset])
+
+  fx_l1 = RandomFx(ml1, gradient=g)
+  fx_l2 = RandomFx(ml2, gradient=g)
+  fx_r1 = RandomFx(mr1, gradient=g)
+  fx_r2 = RandomFx(mr2, gradient=g)
+
+  effectManager.add([
+      fx_l1,
+      fx_l2,
+      fx_r1,
+      fx_r2
+  ])
+
+def add_scroll_fx(effectManager, leftStrip, rightStrip):
+  ml1 = create_strip_segment(leftStrip, 0, 30, 60, 90)
+  ml2 = create_strip_segment(leftStrip, 30, 60, 90, 120)
+  mr1 = create_strip_segment(rightStrip, 0, 30, 60, 90)
+  mr2 = create_strip_segment(rightStrip, 30, 60, 90, 120)
+
+  g = Gradient(resolution=512)
+  g.add_color_group(GRADIENT_PRESETS["red_flash"])
+  g.add_color_group(GRADIENT_PRESETS["fierce_ice"])
+
+  fx_l1 = ScrollFx(ml1, gradient=g)
+  fx_l2 = ScrollFx(ml2, gradient=g)
+
+  fx_r1 = ScrollFx(mr1, gradient=g)
+  fx_r2 = ScrollFx(mr2, gradient=g)
+
+  effectManager.add([
+      fx_l1,
+      fx_l2,
+      fx_r1,
+      fx_r2
   ])
