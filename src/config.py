@@ -9,7 +9,7 @@ load_dotenv()
 # Sampling rate in Hz
 DSP_RATE = 44100
 # Frames per second
-DSP_FPS = 42
+DSP_FPS = 61
 # Number of frames to keep in rolling buffer
 DSP_N_ROLLING_HISTORY = 4
 # Number of Mel filterbank channels (5 LEDs)
