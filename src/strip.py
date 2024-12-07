@@ -1,5 +1,6 @@
 import numpy as np
 import config as cfg
+
 try:
     from rpi_ws281x import *
     rpi_ws281x_available = True
@@ -46,6 +47,9 @@ class Strip:
             return
         for i in range(len(self.data)):
             r, g, b, brightness = self.data[i]
-            self.strip.setBrightness(int(brightness))
-            self.strip.setPixelColorRGB(i, int(r), int(g), int(b))
+            nb = brightness / 255
+            rb = int(r * nb)
+            gb = int(g * nb)
+            bb = int(b * nb)
+            self.strip.setPixelColorRGB(i, rb, gb, bb)
         self.strip.show()
