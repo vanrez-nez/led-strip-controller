@@ -20,8 +20,9 @@ class BlinkFx(BaseFx):
 
     def _set_color(self, t, brightness=255):
         use_gradient = self.gradient and t is not None
+        color = self.gradient.get_color(t) if use_gradient else self.color
         for pixel in self.segment:
-            pixel.rgb = self.gradient.get_color(t) if use_gradient else self.color
+            pixel.rgb = color
             pixel.brightness = brightness
 
     def level_smooth_fx(self):
