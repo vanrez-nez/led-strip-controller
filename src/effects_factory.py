@@ -39,7 +39,7 @@ def add_meter_fx(effectManager, leftStrip, rightStrip, mode):
   fx_r2 = MeterFx(mr2, gradient=g)
   fx_r2.set_mode(mode)
 
-  effectManager.add([
+  effectManager.add("meter_" + mode, [
       fx_l1,
       fx_l2,
       fx_r1,
@@ -59,7 +59,7 @@ def add_blink_fx(effectManager, leftStrip, rightStrip, mode):
   fx_right = BlinkFx(segment_2, gradient=g)
   fx_right.set_mode(mode)
 
-  effectManager.add([
+  effectManager.add("blink_" + mode, [
       fx_left,
       fx_right
   ])
@@ -71,7 +71,7 @@ def add_cop_fx(effectManager, leftStrip, rightStrip):
   fx_left.set_mode('flash')
   fx_right = CopFx(segment_2, 500, direction = 0, reverse_colors=True)
   fx_right.set_mode('flash')
-  effectManager.add([
+  effectManager.add("cop", [
       fx_left,
       fx_right
   ])
@@ -90,7 +90,7 @@ def add_random_fx(effectManager, leftStrip, rightStrip, color_preset):
   fx_r1 = RandomFx(mr1, gradient=g)
   fx_r2 = RandomFx(mr2, gradient=g)
 
-  effectManager.add([
+  effectManager.add("random_" + color_preset, [
       fx_l1,
       fx_l2,
       fx_r1,
@@ -113,7 +113,7 @@ def add_scroll_fx(effectManager, leftStrip, rightStrip):
   fx_r1 = ScrollFx(mr1, gradient=g)
   fx_r2 = ScrollFx(mr2, gradient=g)
 
-  effectManager.add([
+  effectManager.add("scroll", [
       fx_l1,
       fx_l2,
       fx_r1,

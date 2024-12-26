@@ -16,7 +16,7 @@ class Loop:
         # For averaging
         self.accum_time = 0.0
         self.frame_count = 0
-        self.avg_fps = 0.0
+        self.avg_fps = 0
 
     def update(self):
         current_time = perf_counter() * 1000

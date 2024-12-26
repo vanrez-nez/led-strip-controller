@@ -1,7 +1,7 @@
 import serial
 import time
+import json
 from base.event_manager import EventManager
-from collections import defaultdict
 
 class UARTCommunication:
     def __init__(self, port='/dev/serial0', baudrate=9600, timeout=1):
@@ -16,30 +16,40 @@ class UARTCommunication:
         Reads incoming data from the serial port and dispatches events if commands are received.
         """
         if self.ser.in_waiting > 0:
-            incoming_data = self.ser.readline().decode('utf-8').strip()
+            incoming_data = self.ser.readline().decode('utf-8', errors='replace').strip()
             print(f"Received: {incoming_data}")
             self._parse_and_dispatch(incoming_data)
 
     def _parse_and_dispatch(self, message):
         """
-        Parses the incoming message in the format cmd::name::key:value and dispatches events.
+        Parses the incoming message. Expected formats:
+        - cmd::name
+        - cmd::name::{...json...}
+
+        The JSON should represent parameters as a JSON object.
         """
         try:
-            parts = message.split('::')
+            parts = message.split('::', 2)  # Split only twice to keep JSON intact if present
             if len(parts) < 2 or parts[0] != "cmd":
-                print("Invalid command format")
+                print(f"Invalid command format: {message}")
                 return
 
-            command_name = parts[1]
+            command_name = parts[1].strip()
+
             params = {}
-            if len(parts) > 2:
-                params = dict(param.split(':', 1) for param in parts[2].split(','))
+            # If there's a JSON part
+            if len(parts) == 3 and parts[2].strip():
+                json_str = parts[2].strip()
+                try:
+                    params = json.loads(json_str)
+                except json.JSONDecodeError as je:
+                    params = json_str
 
             # Dispatch event to subscribed listeners
             self.event_manager.publish(command_name, params)
 
         except Exception as e:
-            print(f"Error parsing command: {e}")
+            print(f"Unexpected error parsing command: {e}")
 
     def on(self, command_name, callback):
         """
@@ -55,13 +65,20 @@ class UARTCommunication:
 
     def send(self, command_name, params=None):
         """
-        Sends a command through the serial port.
+        Sends a command through the serial port. If params are provided,
+        serialize them as JSON and append after ::.
+
+        Format sent:
+        - cmd::command_name
+        - cmd::command_name::{...json...} if params exist
         """
         params = params or {}
-        param_string = ','.join(f"{key}:{value}" for key, value in params.items())
         message = f"cmd::{command_name}"
-        if param_string:
-            message += f"::{param_string}"
+
+        if params:
+            json_str = json.dumps(params)
+            message += f"::{json_str}"
+
         self.ser.write((message + "\n").encode('utf-8'))
         print(f"Sent: {message}")
 
@@ -93,12 +110,15 @@ if __name__ == "__main__":
     uart.on("restart", restart_handler)
     uart.on("ping", ping_handler)
 
+    # Example of sending a command with and without parameters
+    uart.send("status", {"key1": "value1", "key2": "value2"})
+    uart.send("restart")  # No params
+
     try:
         while True:
             # Check for updates
             uart.update()
             time.sleep(0.1)
-
     except KeyboardInterrupt:
         print("Program exited.")
         uart.close()

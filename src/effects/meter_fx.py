@@ -18,9 +18,9 @@ class MeterFx(BaseFx):
         self.peak_heat_decay = 0.9
         self.last_peak = 0
         self.effect_modes = {
-            "meter": self.meter_fx,
-            "meter_center": self.meter_center_fx,
-            "meter_sides": self.meter_sides_fx,
+            "from_bottom": self.meter_fx,
+            "center": self.meter_center_fx,
+            "sides": self.meter_sides_fx,
         }
 
     def update_decay(self):

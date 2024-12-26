@@ -53,3 +53,6 @@ class Strip:
             bb = int(b * nb)
             self.strip.setPixelColorRGB(i, rb, gb, bb)
         self.strip.show()
+
+    def clear(self):
+        self.strip.setBrightness(0)
