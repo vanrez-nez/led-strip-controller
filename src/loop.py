@@ -16,6 +16,7 @@ class Loop:
         # For averaging
         self.accum_time = 0.0
         self.frame_count = 0
+        self.avg_fps = 0.0
 
     def update(self):
         current_time = perf_counter() * 1000
@@ -34,8 +35,8 @@ class Loop:
         elif self.mode == "avg":
             # Only print after the averaging interval has passed
             if self.accum_time >= self.avg_interval_ms:
-                avg_fps = (self.frame_count / (self.accum_time / 1000.0))
-                print(f"Avg FPS: {avg_fps:.2f}")
+                self.avg_fps = (self.frame_count / (self.accum_time / 1000.0))
+                print(f"Avg FPS: {self.avg_fps:.2f}")
 
                 # Reset accumulators
                 self.frame_count = 0
