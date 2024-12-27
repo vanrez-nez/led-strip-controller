@@ -16,7 +16,8 @@ class Strip:
         self.invert = invert
         self.dma_channel = dma_channel
         self.pwm_channel = pwm_channel
-        self.strip = self.init_strip()
+        self.strip = None
+        self.initted = False
 
     def print_error(self, caller):
         print(f"Error in {caller}: rpi_ws281x library is not available. Please install it with 'pip install rpi_ws281x'.")
@@ -25,6 +26,8 @@ class Strip:
         if not rpi_ws281x_available:
             self.print_error("init_strip")
             return None
+        if self.initted:
+            return self.strip
         led_count = len(self.data)
         strip = Adafruit_NeoPixel(
             num=led_count,
@@ -35,7 +38,7 @@ class Strip:
             brightness=cfg.STRIP_LED_BRIGHTNESS,
             freq_hz=cfg.STRIP_LED_FREQ_HZ)
         strip.begin()
-        return strip
+        self.strip = strip
 
     def __len__(self):
         return len(self.data)
@@ -45,6 +48,8 @@ class Strip:
         if not rpi_ws281x_available:
             self.print_error("push")
             return
+        if not self.strip:
+            self.init_strip()
         for i in range(len(self.data)):
             r, g, b, brightness = self.data[i]
             nb = brightness / 255
@@ -55,4 +60,9 @@ class Strip:
         self.strip.show()
 
     def clear(self):
+        print("Clearing strip data.")
         self.strip.setBrightness(0)
+        self.strip.show()
+        self.strip._cleanup()
+        self.strip = None
+        self.initted = False
