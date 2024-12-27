@@ -1,3 +1,6 @@
+from segment import Segment
+from multi_segment import MultiSegment
+
 class EffectManager:
     def __init__(self, mode='manual_cycle', time_cycle_duration=30000):
         """
@@ -18,6 +21,7 @@ class EffectManager:
         self.idle_level_threshold = 0.1  # Level considered idle
         self.idle_time_duration = 1000  # in milliseconds, time to consider before switching in auto_cycle
         self.idle_time = 0
+        self.active_strips = []
 
     def add(self, name, new_effects):
         """
@@ -35,6 +39,7 @@ class EffectManager:
             self.current_group = self.effects[name]
         if name not in self.cycle_groups:
             self.cycle_groups.append(name)
+        self.update_active_strips()
 
     def set_current(self, name):
         """
@@ -49,6 +54,7 @@ class EffectManager:
         self.current_index = self.cycle_groups.index(name) if name in self.cycle_groups else 0
         self.current_group = self.effects[name]
         self.time_since_last_switch = 0
+        self.update_active_strips()
 
     def list_effects(self):
         """
@@ -96,6 +102,7 @@ class EffectManager:
         ]:
             self.current_index = 0
             self.current_group = self.effects[self.cycle_groups[0]]
+        self.update_active_strips()
 
     def next(self):
         """Switch to the next group of effects."""
@@ -104,6 +111,8 @@ class EffectManager:
         self.current_index = (self.current_index + 1) % len(self.cycle_groups)
         self.current_group = self.effects[self.cycle_groups[self.current_index]]
         self.time_since_last_switch = 0
+        self.update_active_strips()
+
 
     def prev(self):
         """Switch to the previous group of effects."""
@@ -112,6 +121,21 @@ class EffectManager:
         self.current_index = (self.current_index - 1) % len(self.cycle_groups)
         self.current_group = self.effects[self.cycle_groups[self.current_index]]
         self.time_since_last_switch = 0
+        self.update_active_strips()
+
+    def update_active_strips(self):
+        """
+        Get the active segments strips from active effect group and deduplicate them.
+        Look for each group effect and get the segments by accesing effect.segment.strip
+        """
+        strips = []
+        for effect in self.current_group["effects"]:
+            if isinstance(effect.segment, Segment):
+                strips.append(effect.segment.strip)
+            elif isinstance(effect.segment, MultiSegment):
+                for seg in effect.segment.segments:
+                    strips.append(seg.strip)
+        self.active_strips = list(set(strips))
 
     def update(self, delta_ms, level):
         """
@@ -143,9 +167,15 @@ class EffectManager:
                     self.time_since_last_switch > self.cycle_timeout_duration):
                 self.next()
 
+        for strip in self.active_strips:
+            strip.push()
+
     def clear(self):
         """Clear all effect groups."""
         self.effects = {}
         self.current_index = 0
         self.current_group = None
         self.cycle_groups = []
+        for strip in self.active_strips:
+            strip.clear()
+        self.active_strips = []
